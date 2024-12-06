@@ -24,4 +24,9 @@ public class GM : MonoBehaviour
             skillWindow.SetActive(skillWindowup);
         }
     }
+
+    public void testc()
+    {
+        Debug.Log("Test worked!!");
+    }
 }
