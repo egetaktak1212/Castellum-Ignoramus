@@ -6,9 +6,10 @@ using TMPro;
 
 public class Skill : MonoBehaviour
 {
-    int number = 0;
+    public int number = 0;
     public string skillname = "something";
     public bool purchased = false;
+    public float staminaCost = 10;
 
     public TMP_Text nameText;
     public TMP_Text numberText;
@@ -38,9 +39,10 @@ public class Skill : MonoBehaviour
         {
             for (int i = 1; i <= 9; i++)
             {
-                if (Input.GetKeyDown(i.ToString()))
+                if (Input.GetKeyDown(i.ToString()) && !GM.skillNumbers.Contains(i))
                 {
                     number = i;
+                    GM.skillNumbers.Add(i);
                     changenumber = false;
                 }
             }
