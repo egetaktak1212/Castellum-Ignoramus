@@ -6,14 +6,17 @@ using TMPro;
 
 public class Skill : MonoBehaviour
 {
-    public int cost = 0;
+    int number = 0;
     public string skillname = "something";
     public bool purchased = false;
 
     public TMP_Text nameText;
-    public TMP_Text costText;
+    public TMP_Text numberText;
     public Image skillImage;
-    public int c = 0;
+    //public GameObject game;
+    
+    bool changenumber = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,16 +27,42 @@ public class Skill : MonoBehaviour
     void Update()
     {
         nameText.text = skillname;
-        costText.text = cost.ToString();
+        numberText.text = number.ToString();
         
+        if (purchased == false)
+        {
+            numberText.text = "";
+        }
+
+        if (changenumber && purchased)
+        {
+            for (int i = 1; i <= 9; i++)
+            {
+                if (Input.GetKeyDown(i.ToString()))
+                {
+                    number = i;
+                    changenumber = false;
+                }
+            }
+        }
+
+    }
+
+    public void clicked()
+    {
         if (purchased == true)
         {
-            costText.text = "";
+            this.changenumber = true;
         }
-    } 
+        return;
+    }
 
-    public void setPurchased(bool purchased)
+    public void setNumber(int number)
     {
-        this.purchased = purchased;
+        this.number = number;
+    }
+    public void setPurchased(bool purchase)
+    {
+        this.purchased = purchase;
     }
 }
