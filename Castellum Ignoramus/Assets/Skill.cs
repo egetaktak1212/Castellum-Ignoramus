@@ -37,7 +37,7 @@ public class Skill : MonoBehaviour
 
         if (changenumber && purchased)
         {
-            for (int i = 1; i <= 9; i++)
+            for (int i = 1; i <= 6; i++)
             {
                 if (Input.GetKeyDown(i.ToString()) && !GM.skillNumbers.Contains(i))
                 {
