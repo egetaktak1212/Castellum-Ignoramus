@@ -43,6 +43,18 @@ public class PlayerControls : MonoBehaviour
 
     public Transform combatLookAt;
 
+    //dash
+    float dashAmount = 32;
+    float dashVelocity = 0;
+    float dashTimer = 0;
+    float dashLength = .2f;
+    int dashCount = 0;
+    int groundDashCount = 0;
+    bool isDashing = false;
+    bool canDash = true;
+    public int maxDashes = 1;
+
+
     public enum CameraStyle
     {
         Open,
@@ -66,9 +78,11 @@ public class PlayerControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
+
         PreUpdate?.Invoke();
-
-
+        bool dashedThisTurn = false;
+        
 
         //if (Input.GetMouseButtonDown(1))
         //{
@@ -85,17 +99,48 @@ public class PlayerControls : MonoBehaviour
 
 
 
-        
+
         float hAxis = Input.GetAxis("Horizontal");
         float vAxis = Input.GetAxis("Vertical");
 
 
+        if (dashTimer == 0 /*|| (isDashing && Input.GetKeyUp(KeyCode.LeftShift))*/)
+        {
+            isDashing = false;
+            dashVelocity = 0;
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !isDashing && dashCount < maxDashes && groundDashCount < maxDashes && canDash)
+        {
+            if (maxDashes != 2)
+            {
+                dashedThisTurn = true;
+            } else if (groundDashCount == 1) {
+                dashedThisTurn = true;
+            }
+            isDashing = true;
+            dashVelocity = dashAmount;
+            yVelocity = 0;
+            dashTimer = dashLength;
+            if (cc.isGrounded)
+            {
+                groundDashCount++;
+            }
+            else
+            {
+                dashCount++;
+            }
+        }
+        dashTimer -= Time.deltaTime;
+        dashTimer = Mathf.Clamp(dashTimer, 0, 10000);
+
         if (!cc.isGrounded)
         {
+            Debug.Log("in the air for some reason");
+            
             // *** If we are in here, we are IN THE AIR ***
 
             otherfalltime += Time.deltaTime;
-            if (Input.GetKeyDown(KeyCode.Space) && jumpCount == 1)
+            if (!isDashing && Input.GetKeyDown(KeyCode.Space) && jumpCount == 1)
             {
                 yVelocity = jumpVelocity;
                 jumpCount++;
@@ -103,13 +148,13 @@ public class PlayerControls : MonoBehaviour
 
 
 
-            if (otherfalltime < .25f && jumpCount == 0 && (Input.GetKeyDown(KeyCode.Space)))
+            if (otherfalltime < .25f && !isDashing && jumpCount == 0 && (Input.GetKeyDown(KeyCode.Space)))
             {
                 yVelocity = jumpVelocity;
                 jumpCount++;
             }
 
-            if (Input.GetKeyDown(KeyCode.Space) && yVelocity < 0.0f)
+            if (Input.GetKeyDown(KeyCode.Space) && yVelocity < 0.0f && !isDashing)
             {
 
                 calcFallTime = true;
@@ -122,14 +167,16 @@ public class PlayerControls : MonoBehaviour
 
             }
 
-
-            if (yVelocity > 0.0f)
+            if (!isDashing)
             {
-                yVelocity += gravity * Time.deltaTime;
-            }
-            else if (yVelocity <= 0.0f)
-            {
-                yVelocity += gravity * 2.0f * Time.deltaTime;
+                if (yVelocity > 0.0f)
+                {
+                    yVelocity += gravity * Time.deltaTime;
+                }
+                else if (yVelocity <= 0.0f)
+                {
+                    yVelocity += gravity * 2.0f * Time.deltaTime;
+                }
             }
 
             //if (Input.GetKeyUp(KeyCode.Space) && yVelocity > 0) { yVelocity = 0.0f; }
@@ -139,14 +186,20 @@ public class PlayerControls : MonoBehaviour
         else if (cc.isGrounded)
         {
             otherfalltime = 0f;
-
+            dashCount = 0;
+            
 
             yVelocity = -2;
             jumpCount = 0;
 
+            //this is to add a delay when trying to dash on the ground
+            if (dashedThisTurn)
+            {
+                StartCoroutine(DisableDash());
+            }
 
 
-            if ((fallingTime < .2f) && calcFallTime)
+                if ((fallingTime < .2f) && calcFallTime)
             {
                 jumpCount++;
                 yVelocity = jumpVelocity;
@@ -155,10 +208,14 @@ public class PlayerControls : MonoBehaviour
             fallingTime = 0;
 
             // Jump!
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (!isDashing)
             {
-                jumpCount++;
-                yVelocity = jumpVelocity;
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    groundDashCount = 0;
+                    jumpCount++;
+                    yVelocity = jumpVelocity;
+                }
             }
 
         }
@@ -183,8 +240,19 @@ public class PlayerControls : MonoBehaviour
 
         amountToMove = new Vector3(moveDir.x, 0, moveDir.z);
 
-        amountToMove.y += yVelocity;
+        if (amountToMove != Vector3.zero)
+        {
+            amountToMove += amountToMove.normalized * dashVelocity;
+        }
+        else {
+            amountToMove += transform.forward * dashVelocity;
+        }
+        if (!isDashing)
+        {
+            amountToMove.y += yVelocity;
 
+
+        }
 
         amountToMove *= Time.deltaTime;
 
@@ -219,40 +287,17 @@ public class PlayerControls : MonoBehaviour
             PostUpdate(Vector3.zero, false ? 1 : 1);
         }
 
-
+        Debug.Log(dashedThisTurn);
     }
 
-    //void SwitchCamera(CameraStyle cameraStyle)
-    //{
-    //    Debug.Log("C");
 
-    //    Vector3 openTransform = openCamera.transform.position;
-    //    Quaternion openRotation = openCamera.transform.rotation;
-
-    //    Vector3 combatTransform = adsCamera.transform.position;
-    //    Quaternion combatRotation = adsCamera.transform.rotation;
-
-    //    if (cameraStyle == CameraStyle.Open)
-    //    {
-    //        openCamera.SetActive(true);
-    //        adsCamera.SetActive(false);
-
-    //        openCamera.transform.position = combatTransform;
-    //        openCamera.transform.rotation = combatRotation;
-    //    }
-    //    else if (cameraStyle == CameraStyle.Combat) {
-    //        adsCamera.SetActive(true);
-    //        openCamera.SetActive(false);
-
-    //        adsCamera.transform.position = openTransform;
-    //        adsCamera.transform.rotation = openRotation;
-    //    }
-
-
-
-    //    currentStyle = cameraStyle;
-
-    //}
+    IEnumerator DisableDash()
+    {
+        canDash = false;
+        yield return new WaitForSeconds(0.5f);
+        canDash = true;
+        groundDashCount = 0;
+    }
 
 
 

@@ -3,28 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.WSA;
 
-public class Skill : MonoBehaviour
+public class PlatformingSkill : MonoBehaviour
 {
-    public int number = 0;
     public string skillname = "something";
     public bool purchased = false;
-    public float staminaCost = 10;
 
     public TMP_Text nameText;
-    public TMP_Text numberText;
     public Image skillImage;
-    public GameObject UIElement = null;
-    //public GameObject game;
-    
+    public GameObject player;
+    public Sprite selectedSprite;
     bool changenumber = false;
 
     // Start is called before the first frame update
     void Start()
     {
         nameText.text = skillname;
-        GM.skills.Add(this);
-        numberText.text = "";
     }
 
     // Update is called once per frame
@@ -35,37 +30,36 @@ public class Skill : MonoBehaviour
 
     public void clicked()
     {
-        if (!purchased) {
+        if (!purchased)
+        {
             if (GM.points > 0)
             {
                 GM.points--;
                 purchased = true;
 
-                numberText.text = number.ToString();
-                if (UIElement != null)
+                if (player != null)
                 {
                     Debug.Log("B");
-                    UIElement.GetComponent<SkillHotbar>().setOpen();
+                    changeSkillIcon();
+                    activate();
                 }
             }
-            else {
+            else
+            {
                 Debug.Log("poor");
             }
         }
-
-        if (purchased == true)
-        {
-            this.changenumber = true;
-        }
-        return;
     }
 
-    public void setNumber(int number)
+    public void changeSkillIcon()
     {
-        this.number = number;
+        skillImage.sprite = selectedSprite;
     }
-    public void setPurchased(bool purchase)
-    {
-        this.purchased = purchase;
+
+    public void activate() {
+        if (skillname.Equals("Double Dash")) {
+            player.GetComponent<PlayerControls>().maxDashes = 2;
+        } //else if this is the other platforming skill that we will def figure out
     }
+
 }

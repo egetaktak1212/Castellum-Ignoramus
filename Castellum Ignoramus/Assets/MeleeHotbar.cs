@@ -6,11 +6,11 @@ using Unity.Cinemachine.Samples;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SkillHotbar : MonoBehaviour
+public class MeleeHotbar : MonoBehaviour
 {
     public TMP_Text numberText;
     int number;
-    public static Action<SkillHotbar> UnSelectUI;
+    public static Action<MeleeHotbar> UnSelectMeleeUI;
     public Image skillImage;
     public Sprite noSkillSprite;
     public Sprite skillSprite;
@@ -22,9 +22,6 @@ public class SkillHotbar : MonoBehaviour
     void Start()
     {
 
-
-
-  
         number = Convert.ToInt32(numberText.text);
         skillImage.sprite = noSkillSprite;
 
@@ -40,10 +37,10 @@ public class SkillHotbar : MonoBehaviour
 
     private void OnEnable()
     {
-        UnSelectUI += unSelectUI;
+        UnSelectMeleeUI += unSelectUI;
     }
 
-    void unSelectUI(SkillHotbar obj) {
+    void unSelectUI(MeleeHotbar obj) {
         if (obj != this) {
             unselectSkill();
         }
@@ -53,9 +50,9 @@ public class SkillHotbar : MonoBehaviour
     void Update()
     {
         KeyCode[] list = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };
-        if (Input.GetKeyDown(list[number - 1]) && open) {
+        if (Input.GetKeyDown(list[number - 1])) {
             selectSkill();
-            UnSelectUI?.Invoke(this);
+            UnSelectMeleeUI?.Invoke(this);
 
         }
 
@@ -80,6 +77,7 @@ public class SkillHotbar : MonoBehaviour
     }
 
     public void setOpen() {
+        Debug.Log("A");
         skillImage.sprite = skillSprite;
         open = true;
     }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unity.Cinemachine.Samples
 {
-    public class SimpleFire : MonoBehaviour
+    public class ShootFireball : MonoBehaviour
     {
         public LayerMask CollisionLayers = 1;
         public float Speed = 500;
@@ -39,6 +39,8 @@ namespace Unity.Cinemachine.Samples
                     QueryTriggerInteraction.Ignore))
                 {
                     t.position = hitInfo.point;
+                    gameObject.SetActive(false);
+                    //THIS IS WHERE YOUD PUT EXPLOSION
                     m_Speed = 0;
                     SetStretch(1);
                 }
