@@ -17,11 +17,14 @@ public class PlayerControls : MonoBehaviour
     public Transform cameraTransform;
     public Action PreUpdate;
     public Action<Vector3, float> PostUpdate;
-
+    public GameObject damageTextPrefab;
 
     bool Strafe = false;
     public void SetStrafeMode(bool b) => Strafe = b;
     public bool isMoving = false;
+    public HealthBarScript healthbar;
+    public int maxHealth = 100;
+    public int currentHealth;
 
     float moveSpeed = 13f;
     float jumpVelocity;
@@ -78,11 +81,11 @@ public class PlayerControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
 
         PreUpdate?.Invoke();
         bool dashedThisTurn = false;
-        
+
 
         //if (Input.GetMouseButtonDown(1))
         //{
@@ -114,7 +117,9 @@ public class PlayerControls : MonoBehaviour
             if (maxDashes != 2)
             {
                 dashedThisTurn = true;
-            } else if (groundDashCount == 1) {
+            }
+            else if (groundDashCount == 1)
+            {
                 dashedThisTurn = true;
             }
             isDashing = true;
@@ -136,7 +141,7 @@ public class PlayerControls : MonoBehaviour
         if (!cc.isGrounded)
         {
             Debug.Log("in the air for some reason");
-            
+
             // *** If we are in here, we are IN THE AIR ***
 
             otherfalltime += Time.deltaTime;
@@ -187,7 +192,7 @@ public class PlayerControls : MonoBehaviour
         {
             otherfalltime = 0f;
             dashCount = 0;
-            
+
 
             yVelocity = -2;
             jumpCount = 0;
@@ -199,7 +204,7 @@ public class PlayerControls : MonoBehaviour
             }
 
 
-                if ((fallingTime < .2f) && calcFallTime)
+            if ((fallingTime < .2f) && calcFallTime)
             {
                 jumpCount++;
                 yVelocity = jumpVelocity;
@@ -244,7 +249,8 @@ public class PlayerControls : MonoBehaviour
         {
             amountToMove += amountToMove.normalized * dashVelocity;
         }
-        else {
+        else
+        {
             amountToMove += transform.forward * dashVelocity;
         }
         if (!isDashing)
@@ -298,7 +304,40 @@ public class PlayerControls : MonoBehaviour
         canDash = true;
         groundDashCount = 0;
     }
+    public void TakeDamage(int damage)
+    {
 
+        string message;
+        if (damage == 999)
+        {
+            message = "Missed!";
+        }
+        else
+        {
+            message = damage.ToString();
+            currentHealth -= damage;
+            healthbar.setHealth(currentHealth);
+        }
+
+
+        Vector3 pos = new Vector3(transform.position.x, transform.position.y + 3f, transform.position.z);
+        GameObject DamageText = Instantiate(damageTextPrefab, pos, Quaternion.identity);
+
+
+
+        DamageText.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = message;
+
+        //if dead, tell game manager
+        if (currentHealth <= 0)
+        {
+            //GM.EndPlayerLife(this);
+            Destroy(gameObject);
+        }
+
+
+
+
+    }
 
 
 }
