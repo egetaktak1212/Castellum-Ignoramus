@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unity.Cinemachine.Samples
 {
-    public class SimpleBullet : MonoBehaviour
+    public class SimpleFire : MonoBehaviour
     {
         public LayerMask CollisionLayers = 1;
         public float Speed = 500;

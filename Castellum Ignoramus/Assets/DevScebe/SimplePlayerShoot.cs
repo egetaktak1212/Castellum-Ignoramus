@@ -19,7 +19,7 @@ namespace Unity.Cinemachine.Samples
         public GameObject BulletPrefab;
 
         [Tooltip("Maximum bullets per second")]
-        public float MaxBulletsPerSec = 10;
+        public float MaxBulletsPerSec = 2;
 
         [Tooltip("Input Axis for firing.  Value is 0 or 1")]
         public InputAxis Fire = InputAxis.DefaultMomentary;
@@ -35,11 +35,11 @@ namespace Unity.Cinemachine.Samples
 
         // We pool the bullets for improved performance
         readonly List<GameObject> m_BulletPool = new ();
+        
+        
+        public bool selected = false;
+        public bool cooldown = true;
 
-        /// Report the available input axes to the input axis controller.
-        /// We use the Input Axis Controller because it works with both the Input package
-        /// and the Legacy input system.  This is sample code and we
-        /// want it to work everywhere.
         void IInputAxisOwner.GetInputAxes(List<IInputAxisOwner.AxisDescriptor> axes)
         {
             axes.Add(new () { DrivenAxis = () => ref Fire, Name = "Fire" });
@@ -54,13 +54,17 @@ namespace Unity.Cinemachine.Samples
         {
             TryGetComponent(out AimController);
         }
-
+        bool shouldFire()
+        {
+            var now = Time.time;
+            return BulletPrefab != null
+                && now - m_LastFireTime > 1 / MaxBulletsPerSec
+                && Fire.Value > 0.1f && selected && cooldown;
+        }
         void Update()
         {
             var now = Time.time;
-            bool fireNow = BulletPrefab != null 
-                && now - m_LastFireTime > 1 / MaxBulletsPerSec
-                && Fire.Value > 0.1f;
+            bool fireNow = shouldFire();
 
             // Get the firing direction.  Special case: if there is a decoupled AimController,
             // firing direction is character forward, not AimController forward.
@@ -83,11 +87,26 @@ namespace Unity.Cinemachine.Samples
             {
                 m_LastFireTime = now;
 
-                if (AimTargetManager != null)
-                    fwd = AimTargetManager.GetAimDirection(transform.position, fwd).normalized;
+                var pos = Vector3.zero;
+                var rot = Quaternion.LookRotation(pos);
+                if (!decoupled)
+                {
 
-                var pos = transform.position + fwd;
-                var rot = Quaternion.LookRotation(fwd, transform.up);
+                    if (AimTargetManager != null)
+                        fwd = AimTargetManager.GetAimDirection(transform.GetChild(0).position, fwd).normalized;
+
+
+                    pos = transform.GetChild(0).position + fwd;
+                    rot = Quaternion.LookRotation(fwd, transform.up);
+                }
+                else {
+                    if (AimTargetManager != null)
+                        fwd = AimTargetManager.GetAimDirection(transform.position, fwd).normalized;
+
+
+                    pos = transform.position + fwd;
+                    rot = Quaternion.LookRotation(fwd, transform.up);
+                }
 
                 // Because creating and destroying GameObjects is costly, we pool them and recycle
                 // the deactivated ones.  The bullets deactivate themselves after a time.

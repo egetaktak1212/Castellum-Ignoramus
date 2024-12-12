@@ -14,7 +14,7 @@ public class GM : MonoBehaviour
 
     public static List<Skill> skills = new List<Skill>();
     public static List<int> skillNumbers = new List<int>();
-
+    public static int points = 5;
     public static GM instance;
 
     public Image healthBar;
@@ -44,7 +44,7 @@ public class GM : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //pointsText.text = points.ToString();
+        pointsText.text = points.ToString();
         if (Input.GetKeyDown(KeyCode.P))
         {
             
@@ -53,17 +53,17 @@ public class GM : MonoBehaviour
             hud.SetActive(!skillWindowup);
         }
 
-        for (int i = 0; i < skills.Count; i++)
-        {
-            if (skills[i].purchased == true && Input.GetKeyDown(skills[i].number.ToString()) && stamina >= skills[1].staminaCost)
-            {
-                stamina -= skills[1].staminaCost;
-                if (stamina < 0)
-                {
-                    stamina = 0f;
-                }
-            }
-        }
+        //for (int i = 0; i < skills.Count; i++)
+        //{
+        //    if (skills[i].purchased == true && Input.GetKeyDown(skills[i].number.ToString()) && stamina >= skills[1].staminaCost)
+        //    {
+        //        stamina -= skills[1].staminaCost;
+        //        if (stamina < 0)
+        //        {
+        //            stamina = 0f;
+        //        }
+        //    }
+        //}
         //heath recover
         if ((health + healthRecoverTime) > maxHealth)
         {

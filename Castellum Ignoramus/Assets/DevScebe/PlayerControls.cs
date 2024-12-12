@@ -59,6 +59,7 @@ public class PlayerControls : MonoBehaviour
         float timeToApex = maxJumpTime / 2;
         gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
         jumpVelocity = (2 * maxJumpHeight) / timeToApex;
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         //SwitchCamera(CameraStyle.Open);
     }
 
@@ -84,7 +85,7 @@ public class PlayerControls : MonoBehaviour
 
 
 
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        
         float hAxis = Input.GetAxis("Horizontal");
         float vAxis = Input.GetAxis("Vertical");
 
@@ -94,7 +95,7 @@ public class PlayerControls : MonoBehaviour
             // *** If we are in here, we are IN THE AIR ***
 
             otherfalltime += Time.deltaTime;
-            if (Input.GetKeyDown(KeyCode.Space) && jumpCount == 0 && otherfalltime > .25f)
+            if (Input.GetKeyDown(KeyCode.Space) && jumpCount == 1)
             {
                 yVelocity = jumpVelocity;
                 jumpCount++;
@@ -102,9 +103,10 @@ public class PlayerControls : MonoBehaviour
 
 
 
-            if (otherfalltime < .25f && (Input.GetKeyDown(KeyCode.Space)))
+            if (otherfalltime < .25f && jumpCount == 0 && (Input.GetKeyDown(KeyCode.Space)))
             {
                 yVelocity = jumpVelocity;
+                jumpCount++;
             }
 
             if (Input.GetKeyDown(KeyCode.Space) && yVelocity < 0.0f)
@@ -146,7 +148,7 @@ public class PlayerControls : MonoBehaviour
 
             if ((fallingTime < .2f) && calcFallTime)
             {
-
+                jumpCount++;
                 yVelocity = jumpVelocity;
             }
             calcFallTime = false;
@@ -155,11 +157,12 @@ public class PlayerControls : MonoBehaviour
             // Jump!
             if (Input.GetKeyDown(KeyCode.Space))
             {
-
+                jumpCount++;
                 yVelocity = jumpVelocity;
             }
 
         }
+
 
 
 

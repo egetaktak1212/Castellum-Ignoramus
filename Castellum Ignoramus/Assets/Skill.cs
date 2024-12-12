@@ -14,6 +14,7 @@ public class Skill : MonoBehaviour
     public TMP_Text nameText;
     public TMP_Text numberText;
     public Image skillImage;
+    public GameObject UIElement = null;
     //public GameObject game;
     
     bool changenumber = false;
@@ -21,14 +22,13 @@ public class Skill : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        nameText.text = skillname;
         GM.skills.Add(this);
     }
 
     // Update is called once per frame
     void Update()
     {
-        nameText.text = skillname;
-        numberText.text = number.ToString();
         
         if (purchased == false)
         {
@@ -44,6 +44,7 @@ public class Skill : MonoBehaviour
                     number = i;
                     GM.skillNumbers.Add(i);
                     changenumber = false;
+
                 }
             }
         }
@@ -52,6 +53,26 @@ public class Skill : MonoBehaviour
 
     public void clicked()
     {
+        if (!purchased) {
+            if (GM.points > 0)
+            {
+                GM.points--;
+                purchased = true;
+                numberText.text = number.ToString();
+                if (UIElement != null)
+                {
+                    Debug.Log("B");
+                    UIElement.GetComponent<SkillHotbar>().setOpen();
+                }
+            }
+            else {
+                Debug.Log("poor");
+            }
+        }
+
+
+
+        Debug.Log(skillname);
         if (purchased == true)
         {
             this.changenumber = true;
