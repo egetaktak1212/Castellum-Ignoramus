@@ -13,8 +13,7 @@ public class GM : MonoBehaviour
     //public int points = 10;
     public TMP_Text pointsText;
 
-    public static List<Skill> skills = new List<Skill>();
-    public static List<int> skillNumbers = new List<int>();
+
     public static int points = 0;
     public static GM instance;
 

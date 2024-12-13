@@ -23,7 +23,6 @@ public class Skill : MonoBehaviour
     void Start()
     {
         nameText.text = skillname;
-        GM.skills.Add(this);
         if (!purchased)
         {
             numberText.text = "";
