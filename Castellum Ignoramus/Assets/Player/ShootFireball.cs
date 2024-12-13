@@ -6,7 +6,7 @@ namespace Unity.Cinemachine.Samples
     public class ShootFireball : MonoBehaviour
     {
         public LayerMask CollisionLayers = 1;
-        public float Speed = 500;
+        public float Speed = 500f;
         public float Lifespan = 3;
 
         [Tooltip("Stretch factor in the direction of motion while flying")]
