@@ -27,7 +27,7 @@ public class MeleeHotbar : MonoBehaviour
 
         //if this is for fireball, specifically make it fireball script. I know this sucks ok
         if (number == 1) {
-            shootScript = shootManager.GetComponent<SimpleFireball>();
+            shootScript = shootManager.GetComponent<SimplePlayerShoot>();
         } else if (number == 2)
         {
             shootScript = shootManager.GetComponent<SimplePlayerShoot>();
