@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class SlashSkill : MonoBehaviour
@@ -10,6 +11,7 @@ public class SlashSkill : MonoBehaviour
     private bool canDealDamage = false; // Whether the skill is ready to deal damage
     private float cooldown = 0f;
     public float cooldownTime = .5f;
+    bool cooldownBoolean = true;
 
     private Coroutine attackCoroutine; // Coroutine to manage periodic attacks
 
@@ -53,11 +55,19 @@ public class SlashSkill : MonoBehaviour
 
         if (other.CompareTag("Player") && this.CompareTag("unit"))
         {
-            // Start the enemy attack coroutine when a player enters the range
-            if (attackCoroutine == null)
-            {
-                attackCoroutine = StartCoroutine(EnemyAttackRoutine(other));
+            EnemyScript enemy = this.GetComponent<EnemyScript>();
+
+            if (enemy.agro && cooldownBoolean) { 
+                other.GetComponent<PlayerControls>().TakeDamage(attack-10);
             }
+
+
+
+            // Start the enemy attack coroutine when a player enters the range
+            //if (attackCoroutine == null)
+            //{
+            //    attackCoroutine = StartCoroutine(EnemyAttackRoutine(other));
+            //}
         }
     }
 
@@ -74,6 +84,15 @@ public class SlashSkill : MonoBehaviour
             }
         }
     }
+
+    private IEnumerator WaitCooldown() { 
+        cooldownBoolean = false;
+        yield return new WaitForSeconds(1f);
+        cooldownBoolean = true;
+    
+    }
+
+
 
     private IEnumerator EnemyAttackRoutine(Collider player)
     {

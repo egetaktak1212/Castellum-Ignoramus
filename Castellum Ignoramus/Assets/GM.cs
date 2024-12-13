@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 
 public class GM : MonoBehaviour
@@ -22,7 +23,7 @@ public class GM : MonoBehaviour
     public float health, maxHealth;
     float healthRecoverTime = 10f;
     public float stamina, maxStamina;
-    float recoverTime = 2f;
+    public float recoverTime = 2f;
 
 
 
@@ -51,7 +52,7 @@ public class GM : MonoBehaviour
         if (instance == null)
         {
             instance = this; // Set the instance to this object
-            DontDestroyOnLoad(gameObject); // Optional: Keep GM across scenes
+            
         }
         else
         {
@@ -65,10 +66,23 @@ public class GM : MonoBehaviour
 
     }
 
+    public void killPlayer() {
+        StartCoroutine(WaitFor3Secs());
+    }
+
+    IEnumerator WaitFor3Secs() {
+        yield return new WaitForSeconds(3f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+    }
+
+
 
     // Start is called before the first frame update
     void Start()
     {
+        UnityEngine.Cursor.lockState = CursorLockMode.None;
+        points = 0;
         pointsText.text = "";
         hud.SetActive(true);
         skillWindow.SetActive(false);
@@ -131,6 +145,7 @@ public class GM : MonoBehaviour
         mainHud.SetActive(false);
         WinCamera.SetActive(true);
         WinCanvas.SetActive(true);
+        StartCoroutine(WaitFor3Secs());
     }
 
     public void MenuStart() {

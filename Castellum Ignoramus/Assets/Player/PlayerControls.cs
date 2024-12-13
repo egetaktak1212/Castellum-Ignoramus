@@ -3,9 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using TMPro;
-using Unity.VisualScripting;
-using Unity.VisualScripting.Dependencies.NCalc;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
@@ -23,7 +20,6 @@ public class PlayerControls : MonoBehaviour
     public GameObject checkpointPosition;
     Vector3 checkpointPos;
     bool respawn = false;
-
 
     bool Strafe = false;
     public void SetStrafeMode(bool b) => Strafe = b;
@@ -343,10 +339,15 @@ public class PlayerControls : MonoBehaviour
         {
             currentHealth = 0; // Prevent negative health
                                // Optionally disable player controls or trigger a death animation
-            Debug.Log("Player is dead!");
+
+            GM.instance.killPlayer();
 
             // Destroy the player object after ending any active logic
             Destroy(gameObject);
+
+
+
+
         }
     }
 

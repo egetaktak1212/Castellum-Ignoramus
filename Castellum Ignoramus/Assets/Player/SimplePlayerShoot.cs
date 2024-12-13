@@ -15,7 +15,7 @@ namespace Unity.Cinemachine.Samples
     /// </summary>
     class SimplePlayerShoot : MonoBehaviour, Unity.Cinemachine.IInputAxisOwner
     {
-        public virtual int stamina { get; set; } = 20;
+        public virtual int stamina { get; set; } = 2;
         [Tooltip("The bullet prefab to instantiate when firing")]
         public GameObject BulletPrefab;
 
