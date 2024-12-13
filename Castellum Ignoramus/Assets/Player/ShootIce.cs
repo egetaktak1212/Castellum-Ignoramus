@@ -8,6 +8,8 @@ namespace Unity.Cinemachine.Samples
         public LayerMask CollisionLayers = 1;
         public float Speed = 500;
         public float Lifespan = 3;
+        public int attack = 2;
+        public int stamina = 3;
 
         [Tooltip("Stretch factor in the direction of motion while flying")]
         public float Stretch = 6;
@@ -38,7 +40,8 @@ namespace Unity.Cinemachine.Samples
                     t.position, t.forward, out var hitInfo, m_Speed * Time.deltaTime, CollisionLayers,
                     QueryTriggerInteraction.Ignore))
                 {
-                    if (hitInfo.collider.CompareTag("Enemy")) {
+                    if (hitInfo.collider.CompareTag("Enemy"))
+                    {
                         gameObject.SetActive(false);
                         //we hit an enemy with the ice
                     }
@@ -66,6 +69,18 @@ namespace Unity.Cinemachine.Samples
         {
             yield return new WaitForSeconds(Lifespan);
             gameObject.SetActive(false);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.CompareTag("unit"))
+            {
+                EnemyScript enemy = other.GetComponent<EnemyScript>();
+                if (enemy != null)
+                {
+                    enemy.TakeDamage(attack);
+                }
+            }
         }
     }
 }

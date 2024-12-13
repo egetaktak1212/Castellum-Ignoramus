@@ -6,18 +6,26 @@ public class SlashSkill : MonoBehaviour
 {
     public bool selected = false; // Whether the skill is selected
     public int attack = 15; // Damage amount
-    public float stamina = 10f; // Stamina cost (for potential use)
+    public int stamina = 10; // Stamina cost (for potential use)
     private bool canDealDamage = false; // Whether the skill is ready to deal damage
+    private float cooldown = 0f;
+    public float cooldownTime = .5f;
+
+    private Coroutine attackCoroutine; // Coroutine to manage periodic attacks
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.I))
-        //{
-        //    Debug.Log("A");
-        //    selected = !selected;
-        //}
+        if (cooldown > 0f)
+        {
+            cooldown -= Time.deltaTime;
+        }
+        else
+        {
+            cooldown = 0f;
+        }
+
         // Check if the skill is selected and the left mouse button is clicked
-        if (selected && Input.GetMouseButtonDown(0)) // 0 = left mouse button
+        if (selected && Input.GetMouseButtonDown(0) && cooldown == 0f) // 0 = left mouse button
         {
             canDealDamage = true; // Enable damage for this frame
         }
@@ -25,19 +33,66 @@ public class SlashSkill : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log($"Collision detected with: {other.gameObject.name}");
-
-        // Check if damage can be dealt and the collided object has the "unit" tag
-        if (canDealDamage && other.CompareTag("unit"))
+        if (other.CompareTag("unit"))
         {
-            EnemyScript enemy = other.GetComponent<EnemyScript>();
-            if (enemy != null)
+            // Player skill attack logic
+            if (canDealDamage)
             {
-                // Deal damage and log the result
-                enemy.TakeDamage(attack);
-                Debug.Log($"{other.name} took {attack} damage.");
+                EnemyScript enemy = other.GetComponent<EnemyScript>();
+                if (enemy != null && GM.instance.stamina > stamina)
+                {
+                    // Deal damage
+                    enemy.TakeDamage(attack);
+                    cooldown = cooldownTime;
+                    GM.instance.publicStamina = stamina;
+                    GM.instance.recoverS = false;
+                }
+                canDealDamage = false; // Reset damage ability after dealing damage
             }
-            canDealDamage = false; // Reset damage ability after dealing damage
+        }
+
+        if (other.CompareTag("Player") && this.CompareTag("unit"))
+        {
+            // Start the enemy attack coroutine when a player enters the range
+            if (attackCoroutine == null)
+            {
+                attackCoroutine = StartCoroutine(EnemyAttackRoutine(other));
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player") && this.CompareTag("unit"))
+        {
+            Debug.Log("coroutine null: " + attackCoroutine != null);
+            // Stop the enemy attack coroutine when the player leaves the range
+            if (attackCoroutine != null)
+            {
+                StopCoroutine(attackCoroutine);
+                attackCoroutine = null;
+            }
+        }
+    }
+
+    private IEnumerator EnemyAttackRoutine(Collider player)
+    {
+        PlayerControls playerControls = player.GetComponent<PlayerControls>();
+
+        while (true)
+        {
+            Debug.Log("attacking");
+            // Check if player is still valid and alive
+            if (player != null && player.CompareTag("Player") && playerControls.currentHealth > 0)
+            {
+                playerControls.TakeDamage(attack - 5);
+                cooldown = 1f;
+                yield return new WaitForSeconds(1f); // Wait for 1 second between attacks
+            }
+            else
+            {
+                yield break; // Exit coroutine if player is no longer valid or alive
+            }
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Unity.Cinemachine.Samples
     /// </summary>
     class SimplePlayerShoot : MonoBehaviour, Unity.Cinemachine.IInputAxisOwner
     {
+        public virtual int stamina { get; set; } = 20;
         [Tooltip("The bullet prefab to instantiate when firing")]
         public GameObject BulletPrefab;
 
@@ -23,7 +24,7 @@ namespace Unity.Cinemachine.Samples
 
         [Tooltip("Input Axis for firing.  Value is 0 or 1")]
         public InputAxis Fire = InputAxis.DefaultMomentary;
-        
+
         [Tooltip("Target to Aim towards. If null, the aim is defined by the forward vector of this gameObject.")]
         public AimTargetManager AimTargetManager;
 
@@ -34,15 +35,15 @@ namespace Unity.Cinemachine.Samples
         SimplePlayerAimController AimController;
 
         // We pool the bullets for improved performance
-        readonly List<GameObject> m_BulletPool = new ();
-        
-        
+        readonly List<GameObject> m_BulletPool = new();
+
+
         public bool selected = false;
         public bool cooldown = true;
 
         void IInputAxisOwner.GetInputAxes(List<IInputAxisOwner.AxisDescriptor> axes)
         {
-            axes.Add(new () { DrivenAxis = () => ref Fire, Name = "Fire" });
+            axes.Add(new() { DrivenAxis = () => ref Fire, Name = "Fire" });
         }
 
         void OnValidate()
@@ -69,11 +70,11 @@ namespace Unity.Cinemachine.Samples
             // Get the firing direction.  Special case: if there is a decoupled AimController,
             // firing direction is character forward, not AimController forward.
             var fwd = transform.forward;
-            bool decoupled = AimController != null 
+            bool decoupled = AimController != null
                 && AimController.PlayerRotation == SimplePlayerAimController.CouplingMode.Decoupled;
             if (decoupled)
                 fwd = transform.parent.forward;
-            
+
             // Face the firing direction if appropriate
             if (AimController != null && !decoupled)
             {
@@ -83,8 +84,11 @@ namespace Unity.Cinemachine.Samples
             }
 
             // Fire the bullet
-            if (fireNow)
+            if (fireNow && GM.instance.stamina > stamina)
             {
+                GM.instance.publicStamina = stamina;
+                GM.instance.recoverS = false;
+
                 m_LastFireTime = now;
 
                 var pos = Vector3.zero;
@@ -99,7 +103,8 @@ namespace Unity.Cinemachine.Samples
                     pos = transform.GetChild(0).position + fwd;
                     rot = Quaternion.LookRotation(fwd, transform.up);
                 }
-                else {
+                else
+                {
                     if (AimTargetManager != null)
                         fwd = AimTargetManager.GetAimDirection(transform.position, fwd).normalized;
 
@@ -113,7 +118,7 @@ namespace Unity.Cinemachine.Samples
                 GameObject bullet = null;
                 for (var i = 0; bullet == null && i < m_BulletPool.Count; ++i) // Look in the pool if one is available
                 {
-                    if (!m_BulletPool[i].activeInHierarchy) 
+                    if (!m_BulletPool[i].activeInHierarchy)
                     {
                         bullet = m_BulletPool[i];
                         bullet.transform.SetPositionAndRotation(pos, rot);

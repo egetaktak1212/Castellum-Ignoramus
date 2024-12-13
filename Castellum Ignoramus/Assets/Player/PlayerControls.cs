@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using TMPro;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Dependencies.NCalc;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
@@ -29,7 +30,10 @@ public class PlayerControls : MonoBehaviour
     public bool isMoving = false;
     public HealthBarScript healthbar;
     public int maxHealth = 100;
-    public int currentHealth;
+    public float currentHealth;
+    float timeH = 0f;
+    public bool recoverH = true;
+    public int publicDamage = 0;
 
     float moveSpeed = 13f;
     float jumpVelocity;
@@ -84,32 +88,38 @@ public class PlayerControls : MonoBehaviour
         jumpVelocity = (2 * maxJumpHeight) / timeToApex;
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         //SwitchCamera(CameraStyle.Open);
+        currentHealth = maxHealth; // Initialize health
+        healthbar.setHealth(currentHealth); // Update health bar
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!recoverH)
+        {
+            timeH = 10f;
+            currentHealth -= publicDamage;
+        }
+        if (timeH <= 0)
+        {
+            // Health recovery
+            if ((currentHealth + 2) > maxHealth)
+            {
+                currentHealth = maxHealth;
+            }
+            else
+            {
+                currentHealth += 4f * Time.deltaTime;
+            }
+        }
+        publicDamage = 0;
+        recoverH = true;
+        timeH -= Time.deltaTime;
+        healthbar.setHealth(currentHealth);
 
 
         PreUpdate?.Invoke();
         bool dashedThisTurn = false;
-
-
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    Debug.Log("A");
-        //    SwitchCamera(CameraStyle.Combat);
-        //    Debug.Log("B");
-        //}
-        //if (Input.GetMouseButtonUp(1))
-        //{
-        //    SwitchCamera(CameraStyle.Open);
-        //    Debug.Log(currentStyle + " ");
-        //}
-
-
-
-
 
         float hAxis = Input.GetAxis("Horizontal");
         float vAxis = Input.GetAxis("Vertical");
@@ -322,43 +332,34 @@ public class PlayerControls : MonoBehaviour
     }
     public void TakeDamage(int damage)
     {
-
-        string message;
-        if (damage == 999)
-        {
-            message = "Missed!";
-        }
-        else
-        {
-            message = damage.ToString();
-            currentHealth -= damage;
-            healthbar.setHealth(currentHealth);
-        }
-
+        recoverH = false;
+        currentHealth -= damage;
+        healthbar.setHealth(currentHealth);
 
         Vector3 pos = new Vector3(transform.position.x, transform.position.y + 3f, transform.position.z);
         GameObject DamageText = Instantiate(damageTextPrefab, pos, Quaternion.identity);
-
-
-
-        DamageText.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = message;
-
-        //if dead, tell game manager
+        DamageText.transform.GetChild(0).gameObject.GetComponent<TextMeshPro>().text = damage.ToString();
         if (currentHealth <= 0)
         {
-            //GM.EndPlayerLife(this);
+            currentHealth = 0; // Prevent negative health
+                               // Optionally disable player controls or trigger a death animation
+            Debug.Log("Player is dead!");
+
+            // Destroy the player object after ending any active logic
             Destroy(gameObject);
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("CheckpointSave")) {
+        if (other.CompareTag("CheckpointSave"))
+        {
             checkpointPos = checkpointPosition.transform.position;
 
         }
     }
-    public void TPtoCheckpoint() {
+    public void TPtoCheckpoint()
+    {
 
         respawn = true;
     }

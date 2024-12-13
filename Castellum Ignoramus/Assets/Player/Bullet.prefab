@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3056719325741855445}
   - component: {fileID: 7562889651135581609}
+  - component: {fileID: 3743763619132648220}
   m_Layer: 2
   m_Name: Bullet
   m_TagString: Untagged
@@ -50,7 +51,30 @@ MonoBehaviour:
     m_Bits: 1
   Speed: 500
   Lifespan: 3
+  attack: 2
+  stamina: 3
   Stretch: 6
+--- !u!65 &3743763619132648220
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3056719325741855433}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.25839496, y: 0.111240454, z: 2.093268}
+  m_Center: {x: 0.020453721, y: 0.015854862, z: -0.03933716}
 --- !u!1 &3983918105985728820
 GameObject:
   m_ObjectHideFlags: 0

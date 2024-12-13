@@ -1545,6 +1545,7 @@ MonoBehaviour:
   selected: 0
   attack: 15
   stamina: 10
+  cooldownTime: 0.5
 --- !u!65 &397398607
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3254,6 +3255,8 @@ MonoBehaviour:
   healthbar: {fileID: 1312645971}
   maxHealth: 100
   currentHealth: 0
+  recoverH: 1
+  publicDamage: 0
   currentStyle: 0
   combatLookAt: {fileID: 1368409651}
   maxDashes: 1
@@ -5392,6 +5395,10 @@ MonoBehaviour:
   maxHealth: 100
   stamina: 100
   maxStamina: 100
+  publicDamage: 0
+  publicStamina: 0
+  recoverS: 1
+  recoverH: 1
   WinCamera: {fileID: 774841619}
   WinCanvas: {fileID: 1246431423}
   MenuCamera: {fileID: 515758601}
@@ -7415,6 +7422,7 @@ MonoBehaviour:
   selected: 0
   spinActive: 0
   attack: 8
+  stamina: 40
   attackInterval: 0.2
   spinCircle: {fileID: 1742503736}
 --- !u!135 &1447577109

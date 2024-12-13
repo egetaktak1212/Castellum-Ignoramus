@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Linq;
+
 
 public class GM : MonoBehaviour
 {
@@ -24,6 +24,15 @@ public class GM : MonoBehaviour
     public float stamina, maxStamina;
     float recoverTime = 2f;
 
+
+
+    public int publicDamage = 0;
+    public int publicStamina = 0;
+    public bool recoverS = true;
+    public bool recoverH = true;
+    float timeS = 0f;
+    float timeH = 0f;
+
     public GameObject WinCamera;
     public GameObject WinCanvas;
     public GameObject MenuCamera;
@@ -35,6 +44,21 @@ public class GM : MonoBehaviour
     public GameObject mainCamera;
     public GameObject mainHud;
     public GameObject cursor;
+
+    void Awake()
+    {
+        // Ensure there is only one instance of GM
+        if (instance == null)
+        {
+            instance = this; // Set the instance to this object
+            DontDestroyOnLoad(gameObject); // Optional: Keep GM across scenes
+        }
+        else
+        {
+            Destroy(gameObject); // Destroy duplicate GM instances
+        }
+    }
+
 
     void onEnable()
     {
@@ -57,6 +81,11 @@ public class GM : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!recoverS)
+        {
+            timeS = 4f;
+            stamina -= publicStamina;
+        }
         pointsText.text = points.ToString();
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -66,38 +95,30 @@ public class GM : MonoBehaviour
             hud.SetActive(!skillWindowup);
         }
 
-        //for (int i = 0; i < skills.Count; i++)
-        //{
-        //    if (skills[i].purchased == true && Input.GetKeyDown(skills[i].number.ToString()) && stamina >= skills[1].staminaCost)
-        //    {
-        //        stamina -= skills[1].staminaCost;
-        //        if (stamina < 0)
-        //        {
-        //            stamina = 0f;
-        //        }
-        //    }
-        //}
-        //heath recover
-        if ((health + healthRecoverTime) > maxHealth)
+        if (timeS <= 0)
         {
-            health = maxHealth;
-        }
-        else
-        {
-            health += healthRecoverTime * Time.deltaTime;
-        }
-        //stamina recover
-        if ((stamina + recoverTime) > maxStamina)
-        {
-            stamina = maxStamina;
-        }
-        else
-        {
-            stamina += recoverTime * Time.deltaTime;
+            // Stamina recovery
+            if ((stamina + recoverTime) > maxStamina)
+
+            {
+                stamina = maxStamina;
+            }
+            else
+            {
+                stamina += recoverTime * Time.deltaTime;
+            }
         }
 
         healthBar.fillAmount = health / maxHealth;
         staminaBar.fillAmount = stamina / maxStamina;
+
+        publicDamage = 0;
+        publicStamina = 0;
+        recoverH = true;
+        recoverS = true;
+        timeH -= Time.deltaTime;
+        timeS -= Time.deltaTime;
+
     }
 
     public void Win() {

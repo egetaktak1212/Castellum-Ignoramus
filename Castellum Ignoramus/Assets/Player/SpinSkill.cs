@@ -7,6 +7,7 @@ public class SpinSkill : MonoBehaviour
     public bool selected = false; // Whether the skill is selected
     public bool spinActive = false; // Whether the skill is active (triggered by first click)
     public int attack = 8; // Damage amount
+    public int stamina = 40;
     public float attackInterval = 0.5f; // Interval between attacks
     private float skillTime = 0.6f; // Duration for which the skill is active
     private float timer = 0f; // Timer for skill duration
@@ -31,9 +32,19 @@ public class SpinSkill : MonoBehaviour
         // Activate skill
         if (selected && Input.GetMouseButtonDown(0) && !spinActive)
         {
-            spinActive = true;
-            timer = skillTime;
-            StartCoroutine(SkillDuration());
+            // Deduct stamina from GM
+            if (GM.instance.stamina >= stamina)
+            {
+                GM.instance.publicStamina = stamina;
+                GM.instance.recoverS = false;
+                spinActive = true;
+                timer = skillTime;
+                StartCoroutine(SkillDuration());
+            }
+            else
+            {
+                Debug.Log("Not enough stamina to activate skill!");
+            }
         }
 
         //Debug.Log(timer);
