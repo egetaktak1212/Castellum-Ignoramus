@@ -39,8 +39,8 @@ namespace Unity.Cinemachine.Samples
                     QueryTriggerInteraction.Ignore))
                 {
                     t.position = hitInfo.point;
-                    gameObject.SetActive(false);
                     //THIS IS WHERE YOUD PUT EXPLOSION
+                    gameObject.SetActive(false);
                     m_Speed = 0;
                     SetStretch(1);
                 }
