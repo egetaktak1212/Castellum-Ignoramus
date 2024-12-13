@@ -226,7 +226,7 @@ public class EnemyScript : MonoBehaviour
     private void Update()
     {
         PlayerControls nearestPlayer = getNearestPlayer();
-        Debug.Log(nearestPlayer);
+        //Debug.Log(nearestPlayer);
         nma.SetDestination(nearestPlayer.transform.position);
 
     }

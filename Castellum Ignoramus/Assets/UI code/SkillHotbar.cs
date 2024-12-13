@@ -17,25 +17,37 @@ public class SkillHotbar : MonoBehaviour
     public Sprite selectedSprite;
     public GameObject shootManager = null;
     SimplePlayerShoot shootScript;
-    bool open = false;
+    SlashSkill slash;
+    SpinSkill spin;
+    public bool open = false;
     // Start is called before the first frame update
     void Start()
     {
-
-
-
   
         number = Convert.ToInt32(numberText.text);
         skillImage.sprite = noSkillSprite;
 
         //if this is for fireball, specifically make it fireball script. I know this sucks ok
-        if (number == 1) {
+        if (number == 1)
+        {
             shootScript = shootManager.GetComponent<SimpleFireball>();
-        } else if (number == 2)
+        }
+        else if (number == 2)
         {
             shootScript = shootManager.GetComponent<SimplePlayerShoot>();
         }
+        else if (number == 3)
+        {
+            slash = shootManager.GetComponent<SlashSkill>();
+        }
+        else if (number == 4) { 
+            spin = shootManager.GetComponent<SpinSkill>();
+        }
 
+        if (open)
+        {
+            setOpen();
+        }
     }
 
     private void OnEnable()
@@ -59,22 +71,39 @@ public class SkillHotbar : MonoBehaviour
 
         }
 
+        Debug.Log(open);
+
 
     }
+
+    public void Select(bool select) {
+        if (number < 3)
+        {
+            shootScript.selected = select;
+        }
+        else if (number == 3)
+        {
+            slash.selected = select;
+        }
+        else if (number == 4) { 
+            spin.selected = select;
+        }
+    }
+
 
     public void selectSkill()
     {
         if (open && shootManager != null)
         {
             skillImage.sprite = selectedSprite;
-            shootScript.selected = true;
+            Select(true);
         }
     }
 
     public void unselectSkill() {
         if (open && shootManager != null) {
             skillImage.sprite = skillSprite;
-            shootScript.selected = false;
+            Select(false);
         }
 
     }

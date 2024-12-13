@@ -56,7 +56,7 @@ public class PlayerControls : MonoBehaviour
     bool isDashing = false;
     bool canDash = true;
     public int maxDashes = 1;
-
+    public int maxJumps = 2;
 
     public enum CameraStyle
     {
@@ -140,12 +140,12 @@ public class PlayerControls : MonoBehaviour
 
         if (!cc.isGrounded)
         {
-            Debug.Log("in the air for some reason");
+            //Debug.Log("in the air for some reason");
 
             // *** If we are in here, we are IN THE AIR ***
 
             otherfalltime += Time.deltaTime;
-            if (!isDashing && Input.GetKeyDown(KeyCode.Space) && jumpCount == 1)
+            if (!isDashing && Input.GetKeyDown(KeyCode.Space) && jumpCount < maxJumps)
             {
                 yVelocity = jumpVelocity;
                 jumpCount++;
@@ -293,7 +293,7 @@ public class PlayerControls : MonoBehaviour
             PostUpdate(Vector3.zero, false ? 1 : 1);
         }
 
-        Debug.Log(dashedThisTurn);
+        //Debug.Log(dashedThisTurn);
     }
 
 

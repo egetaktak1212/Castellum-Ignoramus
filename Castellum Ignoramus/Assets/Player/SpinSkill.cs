@@ -23,10 +23,10 @@ public class SpinSkill : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            selected = true;
-        }
+        //if (Input.GetKeyDown(KeyCode.O))
+        //{
+        //    selected = true;
+        //}
 
         // Activate skill
         if (selected && Input.GetMouseButtonDown(0) && !spinActive)
@@ -36,7 +36,7 @@ public class SpinSkill : MonoBehaviour
             StartCoroutine(SkillDuration());
         }
 
-        Debug.Log(timer);
+        //Debug.Log(timer);
         spinCircle.SetActive(spinActive);
 
 
@@ -76,20 +76,20 @@ public class SpinSkill : MonoBehaviour
     {
         if (!spinActive)
         {
-            Debug.Log("Skill not active; no damage will be applied.");
+            //Debug.Log("Skill not active; no damage will be applied.");
             return;
         }
 
-        Debug.Log($"Trigger detected with: {other.gameObject.name}");
+        //Debug.Log($"Trigger detected with: {other.gameObject.name}");
         if (other.CompareTag("unit"))
         {
             EnemyScript enemy = other.GetComponent<EnemyScript>();
             if (enemy != null)
             {
-                Debug.Log($"Enemy found: {other.gameObject.name}");
+                //Debug.Log($"Enemy found: {other.gameObject.name}");
                 if (!activeCoroutines.ContainsKey(other.gameObject))
                 {
-                    Debug.Log($"Starting ApplyDamage coroutine for: {other.gameObject.name}");
+                    //Debug.Log($"Starting ApplyDamage coroutine for: {other.gameObject.name}");
                     Coroutine damageCoroutine = StartCoroutine(ApplyDamage(enemy, other.gameObject));
                     activeCoroutines.Add(other.gameObject, damageCoroutine);
                 }

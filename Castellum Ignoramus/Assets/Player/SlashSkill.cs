@@ -11,11 +11,11 @@ public class SlashSkill : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            Debug.Log("A");
-            selected = !selected;
-        }
+        //if (Input.GetKeyDown(KeyCode.I))
+        //{
+        //    Debug.Log("A");
+        //    selected = !selected;
+        //}
         // Check if the skill is selected and the left mouse button is clicked
         if (selected && Input.GetMouseButtonDown(0)) // 0 = left mouse button
         {
@@ -25,7 +25,7 @@ public class SlashSkill : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"Collision detected with: {other.gameObject.name}");
+        //Debug.Log($"Collision detected with: {other.gameObject.name}");
 
         // Check if damage can be dealt and the collided object has the "unit" tag
         if (canDealDamage && other.CompareTag("unit"))

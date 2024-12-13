@@ -56,9 +56,13 @@ public class PlatformingSkill : MonoBehaviour
     }
 
     public void activate() {
-        if (skillname.Equals("Double Dash")) {
+        if (skillname.Equals("Double Dash"))
+        {
             player.GetComponent<PlayerControls>().maxDashes = 2;
-        } //else if this is the other platforming skill that we will def figure out
+        }
+        else if (skillname.Equals("Triple Jump")) { 
+            player.GetComponent<PlayerControls>().maxJumps = 3;
+        }
     }
 
 }

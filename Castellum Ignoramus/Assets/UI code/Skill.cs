@@ -24,7 +24,14 @@ public class Skill : MonoBehaviour
     {
         nameText.text = skillname;
         GM.skills.Add(this);
-        numberText.text = "";
+        if (!purchased)
+        {
+            numberText.text = "";
+        }
+        else {
+            numberText.text = number.ToString();
+            UIElement.GetComponent<SkillHotbar>().setOpen();
+        }
     }
 
     // Update is called once per frame
