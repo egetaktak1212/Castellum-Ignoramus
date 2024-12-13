@@ -13,7 +13,8 @@ public class SlashSkill : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.I))
         {
-            selected = true;
+            Debug.Log("A");
+            selected = !selected;
         }
         // Check if the skill is selected and the left mouse button is clicked
         if (selected && Input.GetMouseButtonDown(0)) // 0 = left mouse button

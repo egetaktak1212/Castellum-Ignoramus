@@ -5,13 +5,21 @@ using UnityEngine;
 public class SpinSkill : MonoBehaviour
 {
     public bool selected = false; // Whether the skill is selected
-    public bool clicked = false; // Whether the skill is active (triggered by first click)
+    public bool spinActive = false; // Whether the skill is active (triggered by first click)
     public int attack = 8; // Damage amount
-    public float attackInterval = 0.2f; // Interval between attacks
-    private float skillTime = 2f; // Duration for which the skill is active
+    public float attackInterval = 0.5f; // Interval between attacks
+    private float skillTime = 0.6f; // Duration for which the skill is active
     private float timer = 0f; // Timer for skill duration
 
+    public GameObject spinCircle;
+
     private Dictionary<GameObject, Coroutine> activeCoroutines = new Dictionary<GameObject, Coroutine>(); // Track active coroutines
+
+    private void Start()
+    {
+        spinCircle.SetActive(false);
+    }
+
 
     void Update()
     {
@@ -21,12 +29,17 @@ public class SpinSkill : MonoBehaviour
         }
 
         // Activate skill
-        if (selected && Input.GetMouseButtonDown(0) && !clicked)
+        if (selected && Input.GetMouseButtonDown(0) && !spinActive)
         {
-            clicked = true;
+            spinActive = true;
             timer = skillTime;
             StartCoroutine(SkillDuration());
         }
+
+        Debug.Log(timer);
+        spinCircle.SetActive(spinActive);
+
+
     }
 
     private IEnumerator SkillDuration()
@@ -39,7 +52,7 @@ public class SpinSkill : MonoBehaviour
         }
 
         Debug.Log("Skill deactivated!");
-        clicked = false;
+        spinActive = false;
         ResetSkill();
     }
 
@@ -61,7 +74,7 @@ public class SpinSkill : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (!clicked)
+        if (!spinActive)
         {
             Debug.Log("Skill not active; no damage will be applied.");
             return;
@@ -90,7 +103,7 @@ public class SpinSkill : MonoBehaviour
 
     private IEnumerator ApplyDamage(EnemyScript enemy, GameObject obj)
     {
-        while (clicked)
+        while (spinActive)
         {
             Debug.Log($"Applying damage to: {enemy.gameObject.name}");
             enemy.TakeDamage(attack);
