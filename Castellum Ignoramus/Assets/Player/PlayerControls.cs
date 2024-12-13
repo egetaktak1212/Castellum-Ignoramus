@@ -18,6 +18,11 @@ public class PlayerControls : MonoBehaviour
     public Action PreUpdate;
     public Action<Vector3, float> PostUpdate;
     public GameObject damageTextPrefab;
+    public GameObject startPosition;
+    public GameObject checkpointPosition;
+    Vector3 checkpointPos;
+    bool respawn = false;
+
 
     bool Strafe = false;
     public void SetStrafeMode(bool b) => Strafe = b;
@@ -71,6 +76,9 @@ public class PlayerControls : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        checkpointPos = startPosition.transform.position;
+
+
         float timeToApex = maxJumpTime / 2;
         gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
         jumpVelocity = (2 * maxJumpHeight) / timeToApex;
@@ -286,6 +294,13 @@ public class PlayerControls : MonoBehaviour
             }
         }
 
+        if (respawn)
+        {
+            cc.enabled = false;
+            respawn = false;
+            transform.position = checkpointPos;
+            cc.enabled = true;
+        }
 
         if (PostUpdate != null)
         {
@@ -293,7 +308,8 @@ public class PlayerControls : MonoBehaviour
             PostUpdate(Vector3.zero, false ? 1 : 1);
         }
 
-        //Debug.Log(dashedThisTurn);
+
+
     }
 
 
@@ -333,11 +349,20 @@ public class PlayerControls : MonoBehaviour
             //GM.EndPlayerLife(this);
             Destroy(gameObject);
         }
-
-
-
-
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("CheckpointSave")) {
+            checkpointPos = checkpointPosition.transform.position;
+
+        }
+    }
+    public void TPtoCheckpoint() {
+
+        respawn = true;
+    }
+
 
 
 }

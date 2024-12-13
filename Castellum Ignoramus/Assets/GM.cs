@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class GM : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class GM : MonoBehaviour
 
     public static List<Skill> skills = new List<Skill>();
     public static List<int> skillNumbers = new List<int>();
-    public static int points = 5;
+    public static int points = 0;
     public static GM instance;
 
     public Image healthBar;
@@ -24,10 +25,23 @@ public class GM : MonoBehaviour
     public float stamina, maxStamina;
     float recoverTime = 2f;
 
+    public GameObject WinCamera;
+    public GameObject WinCanvas;
+    public GameObject MenuCamera;
+    public GameObject MenuCanvas;
+
+    //list to store all the game objects im gonna disable/enable when ending starting the game
+    public GameObject player;
+    public GameObject cams;
+    public GameObject mainCamera;
+    public GameObject mainHud;
+    public GameObject cursor;
+
     void onEnable()
     {
 
     }
+
 
     // Start is called before the first frame update
     void Start()
@@ -86,4 +100,27 @@ public class GM : MonoBehaviour
         healthBar.fillAmount = health / maxHealth;
         staminaBar.fillAmount = stamina / maxStamina;
     }
+
+    public void Win() {
+        //disable the player, the two cameras, the inputs, all of it. enable ending camera
+        Debug.Log("Winer");
+        mainCamera.SetActive(false);
+        cursor.SetActive(false);
+        player.SetActive(false);
+        cams.SetActive(false);
+        mainHud.SetActive(false);
+        WinCamera.SetActive(true);
+        WinCanvas.SetActive(true);
+    }
+
+    public void MenuStart() {
+        cursor.SetActive(true);
+        player.SetActive(true);
+        cams.SetActive(true);
+        mainHud.SetActive(true);
+        MenuCamera.SetActive(false);
+        MenuCanvas.SetActive(false);
+    }
+
+
 }
